@@ -5,7 +5,9 @@ from transformers import AutoModelForSequenceClassification, TrainingArguments, 
 from transformers import AutoTokenizer
 from os.path import join
 import pickle
+import scipy
 from transformers import EarlyStoppingCallback, IntervalStrategy
+from sklearn.metrics import mean_squared_error
 
 
 
@@ -28,17 +30,30 @@ class TextDataset(Dataset):
 
 
 def main(path2data='data', train_part=0.8):
+    N_classes = 100
     tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
 
     train_path = join(path2data, 'train.csv')
     train_df = pd.read_csv(train_path)
-    bins = np.histogram(train_df.target, bins=100)[1]
+    bins = np.histogram(train_df.target, bins=N_classes-1)[1]
     def values2label(list_values):
-        return np.digitize(list_values, bins)
+        return np.digitize(list_values, bins)-1
+    def vector2prediction(x):
+        x = scipy.special.softmax(x, axis=1)
+        y = np.array([(bins[i] + bins[i+1])/2 for i in range(len(bins)-1)] + [bins.max()])
+        return (x*y[None, :]).sum(1)
+
+    def compute_metrics(p):
+        pred = vector2prediction(p.predictions)
+        b = np.zeros((p.label_ids.size, N_classes))
+        b[np.arange(p.label_ids.size), p.label_ids] = 1
+        targets = vector2prediction(b*1e3)
+        rms = mean_squared_error(targets, pred, squared=False)
+        return {"rmse": rms}
+
     ind = int(len(train_df)*train_part)
     train_dataset = TextDataset(train_df[:ind], values2label, tokenizer)
     val_dataset = TextDataset(train_df[ind:], values2label, tokenizer)
-    val_dataset[0]
 
     test_path = join(path2data, 'test.csv')
     test_df = pd.read_csv(test_path)
@@ -46,12 +61,12 @@ def main(path2data='data', train_part=0.8):
 
 
 
-    model = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased", num_labels=102)
+    model = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased", num_labels=N_classes)
     training_args = TrainingArguments(
         output_dir="./results",
         learning_rate=2e-5,
-        per_device_train_batch_size=16,
-        per_device_eval_batch_size=16,
+        per_device_train_batch_size=8,
+        per_device_eval_batch_size=8,
         num_train_epochs=20,
         weight_decay=0.01,
         load_best_model_at_end=True,
@@ -65,6 +80,7 @@ def main(path2data='data', train_part=0.8):
         train_dataset=train_dataset,
         eval_dataset=val_dataset,
         tokenizer=tokenizer,
+        compute_metrics=compute_metrics,
         callbacks=[EarlyStoppingCallback(early_stopping_patience=3)]
     )
 
