@@ -6,7 +6,7 @@ To train model simply run train.py script.
 python3 train.py
 ```
 trained model will be saved into ```checkpoint``` dir
-<br>Evaluation score RMSE=0.57
+<br>Evaluation score RMSE=0.58
 
 ### Start API
 To start API you should first start ray server
