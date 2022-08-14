@@ -1,43 +1,45 @@
 import pickle
-import scipy
-import numpy as np
-import numpy as np
-import pandas as pd
-from torch.utils.data import Dataset
-from transformers import AutoModelForSequenceClassification, TrainingArguments, Trainer
-from transformers import AutoTokenizer
 from os.path import join
-import pickle
+
+import pandas as pd
+import torch
 from sklearn.metrics import mean_squared_error
+from tqdm import tqdm
+from transformers import AutoModelForSequenceClassification
+from transformers import AutoTokenizer
+
+from train import vector2prediction
 
 
+class Predictor:
+    def __init__(self, path2checkpoint):
+        with open(join(path2checkpoint, 'bins'), 'rb') as f:
+            self.bins = pickle.load(f)
+        self.model = AutoModelForSequenceClassification.from_pretrained(path2checkpoint)
+        self.tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
 
-def main(path2data, path2predictions):
-    N_classes = 100
-    train_part = 0.8
-    train_path = join(path2data, 'train.csv')
-    train_df = pd.read_csv(train_path)
-    bins = np.histogram(train_df.target, bins=N_classes-1)[1]
+    def __call__(self, text):
+        with torch.no_grad():
+            preictions = self.model(torch.tensor(self.tokenizer(text)['input_ids']).unsqueeze(0)).logits.cpu().numpy()
+        result = vector2prediction(preictions, self.bins)
+        return result[0]
 
-    def vector2prediction(x):
-        x = scipy.special.softmax(x, axis=1)
-        y = np.array([(bins[i] + bins[i+1])/2 for i in range(len(bins)-1)] + [bins.max()])
-        return (x*y[None, :]).sum(1)
 
-    with open(path2predictions, 'rb') as f:
-        data = pickle.load(f)
+def main(path2checkpoint, path2data, train_part):
+    predictor = Predictor(path2checkpoint)
 
-    predictions = vector2prediction(data.predictions)
-    ind = int(len(train_df) * train_part)
-    targets = train_df[ind:].target.values
-    rms = mean_squared_error(targets, predictions, squared=False)
+    df = pd.read_csv(join(path2data, 'train.csv'))
+    ind = int(len(df) * train_part)
+    predicted = []
+    for text in tqdm(df.excerpt.to_list()[ind:]):
+        value = predictor(text)
+        predicted.append(value)
+    targets = df[ind:].target.values
+    rms = mean_squared_error(targets, predicted, squared=False)
     print('rms', rms)
-    return predictions
 
 
-
-
-if __name__ == "__main__":
-    main('data', 'predicted_val', )
-
-print()
+if __name__ == '__main__':
+    main(path2checkpoint='checkpoints',
+         path2data='data',
+         train_part=0.8)

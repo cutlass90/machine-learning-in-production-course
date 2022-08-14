@@ -40,7 +40,7 @@ def vector2prediction(x, bins):
 
 
 def compute_metrics(p):
-    with open('bins', 'rb') as f:
+    with open('checkpoints/bins', 'rb') as f:
         bins = pickle.load(f)
     pred = vector2prediction(p.predictions, bins)
     b = np.zeros((p.label_ids.size, p.predictions.shape[1]))
@@ -57,7 +57,7 @@ def main(path2data='data', train_part=0.8):
     train_path = join(path2data, 'train.csv')
     train_df = pd.read_csv(train_path)
     bins = np.histogram(train_df.target, bins=N_classes - 1)[1]
-    with open('bins', 'wb') as f:
+    with open('checkpoints/bins', 'wb') as f:
         pickle.dump(bins, f)
 
     ind = int(len(train_df) * train_part)
