@@ -18,7 +18,7 @@ class Predictor:
         self.model = AutoModelForSequenceClassification.from_pretrained(path2checkpoint)
         self.tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
 
-    def __call__(self, text):
+    def predict(self, text):
         with torch.no_grad():
             preictions = self.model(torch.tensor(self.tokenizer(text)['input_ids']).unsqueeze(0)).logits.cpu().numpy()
         result = vector2prediction(preictions, self.bins)
@@ -32,7 +32,7 @@ def main(path2checkpoint, path2data, train_part):
     ind = int(len(df) * train_part)
     predicted = []
     for text in tqdm(df.excerpt.to_list()[ind:]):
-        value = predictor(text)
+        value = predictor.predict(text)
         predicted.append(value)
     targets = df[ind:].target.values
     rms = mean_squared_error(targets, predicted, squared=False)

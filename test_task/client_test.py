@@ -19,6 +19,8 @@ article_text = (
     "of millions of people on earth."
 )
 
-response = requests.get("http://127.0.0.1:8000/PredictorDeployent?txt=" + article_text).text
+response = requests.get("http://127.0.0.1:8000/PredictorDeployent/?txt=" + article_text).text
+response_max100 = requests.get("http://127.0.0.1:8000/PredictorDeployent/max100?txt=" + article_text).text
 
-print(response)
+print('response', response)
+print('response_max100', response_max100)

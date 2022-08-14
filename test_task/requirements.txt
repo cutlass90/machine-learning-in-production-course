@@ -7,3 +7,4 @@ ray[serve]
 sklearn
 transformers
 tqdm
+fastapi
