@@ -4,6 +4,9 @@ on:
     branches:
       - "week1"
 
+env:
+  DOCKER_IMAGE_NAME: sdds
+
 jobs:
   build-and-push-sdds:
     runs-on: ubuntu-20.04
