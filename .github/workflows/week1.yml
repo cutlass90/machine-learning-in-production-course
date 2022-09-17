@@ -26,4 +26,4 @@ jobs:
           context: ./week1
           file: ./week1/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/sdds:latest
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/$DOCKER_IMAGE_NAME:DOCKER_IMAGE_TAG
