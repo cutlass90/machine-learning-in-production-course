@@ -30,5 +30,4 @@ git+https://github.com/lstein/GFPGAN@fix-dark-cast-images#egg=gfpgan
 # torch==1.11.0
 # Same as numpy - let pip do its thing
 torchvision
--e .
 wget
