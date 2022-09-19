@@ -99,6 +99,7 @@ def main():
 
     # preload the model
     if not os.path.isfile('models/ldm/stable-diffusion-v1/model.ckpt'):
+        os.makedirs('models/ldm/stable-diffusion-v1', exist_ok=True)
         import wget
         wget.download('https://dl.dropboxusercontent.com/s/vg2wojrw91b97a3/sd-v1-4.ckpt?dl=0', 'models/ldm/stable-diffusion-v1/model.ckpt')
     t2i.load_model()
