@@ -35,5 +35,5 @@ jobs:
       - name: start minio docker
         run: |
           docker run -p 9000:9000 -p 9001:9001 -d quay.io/minio/minio server /data --console-address ":9001"
-          pip install pytest
+          pip install -r week2/requirement.txt
           pytest week2/test_minio_client.py
