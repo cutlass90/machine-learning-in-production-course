@@ -5,7 +5,7 @@ from minio.api import S3Error
 class MinioClient:
     def __init__(self):
         self.client = minio.Minio(
-            endpoint='192.168.2.11:9000',
+            endpoint='172.17.0.2:9000',
             access_key='minioadmin',
             secret_key='minioadmin',
             secure=False
