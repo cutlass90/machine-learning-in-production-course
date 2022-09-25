@@ -5,6 +5,7 @@ on:
     branches:
       - 'master'
       - 'week2'
+      - 'week2_pr2'
 
 jobs:
 
@@ -25,3 +26,14 @@ jobs:
       run: |
         kubectl create -f week2/minio-standalone.yaml
         kubectl get pods
+
+  minio-client-tests:
+    runs-on: ubuntu-latest
+    name: run minio docker and perform tests
+    steps:
+      - uses: actions/checkout@v2
+      - name: start minio docker
+        run: |
+          docker run -p 9000:9000 -p 9001:9001 -d quay.io/minio/minio server /data --console-address ":9001"
+          pip install pytest
+          pytest week2/test_minio_client.py
