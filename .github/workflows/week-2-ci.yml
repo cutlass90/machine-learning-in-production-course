@@ -42,6 +42,7 @@ jobs:
           docker run \
            -p 9000:9000 \
            -p 9090:9090 \
+           -d \
            --name minio \
            -v $PWD/minio/data:/data \
            -e "MINIO_ROOT_USER=minioadmin" \
