@@ -32,8 +32,14 @@ jobs:
     name: run minio docker and perform tests
     steps:
       - uses: actions/checkout@v2
-      - name: start minio docker
+      - name: install requirement
+        run: |
+          pip install -r week2/requirement.txt
+
+      - name: run minio docker
         run: |
           docker run -p 9000:9000 -p 9001:9001 -d quay.io/minio/minio server /data --console-address ":9001"
-          pip install -r week2/requirement.txt
+
+      - name: run tests
+        run: |
           pytest week2/test_minio_client.py
