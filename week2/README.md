@@ -27,3 +27,7 @@ minio server ~/minio --console-address :9090
 ```angular2html
 pytest  week2/test_minio_client.py
 ```
+
+[Here](pandas-data-storage-compare.md) you can find speed read/write comparison of several popular data formats.
+
+[And here](singleprocess_vs_multiprocessing.md) is comparison of single process and multiprocess speed on CPU consumption tasks.
