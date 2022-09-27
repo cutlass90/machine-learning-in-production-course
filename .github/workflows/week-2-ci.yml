@@ -1,0 +1,27 @@
+name: week-2-ci
+
+on:
+  push:
+    branches:
+      - 'master'
+      - 'week2'
+
+jobs:
+
+  minio-deploy:
+
+    runs-on: ubuntu-latest
+    name: build example and deploy to minikube
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Start minikube
+      uses: medyagh/setup-minikube@master
+
+    - name: Try the cluster
+      run: kubectl get pods -A
+    
+    - name: Deploy minio to minikube
+      run: |
+        kubectl create -f week2/minio-standalone.yaml
+        kubectl get pods
