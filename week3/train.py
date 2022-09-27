@@ -11,9 +11,13 @@ from tqdm import tqdm
 from src.networks import SimpleAE
 from src.models import DDPM
 from configs.mnist_v1 import opt
+import wandb
+
+
 
 
 def main():
+    wandb.init(config = opt.__dict__)
     print(opt)
     os.makedirs(os.path.join(opt.checkpoint_dir, 'tf_logs'), exist_ok=True)
     os.makedirs(os.path.join(opt.checkpoint_dir, 'weights'), exist_ok=True)
@@ -41,15 +45,19 @@ def main():
             optim.step()
             if step % opt.log_freq == 0:
                 writer.add_scalar('mse loss', loss.item(), step)
+                wandb.log({"mse loss": loss.item()}, step=step)
                 print(loss.item())
             if (step + 1) % opt.save_freq == 0:
                 torch.save(ddpm.state_dict(), os.path.join(opt.checkpoint_dir, 'weights', 'latest.pth'))
 
             step += 1
+            wandb.watch(diffusor)
 
         ddpm.eval()
         samples = ddpm.sample(16, (1, 28, 28))
         save_image(make_grid(samples, nrow=4, value_range=(-1, 1)), f"{opt.checkpoint_dir}/epoch{i}_sample.png")
+        wandb.log({"generated images": wandb.Image(f"{opt.checkpoint_dir}/epoch{i}_sample.png")},
+                  step=step)
         print()
 
 
