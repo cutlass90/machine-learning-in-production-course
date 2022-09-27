@@ -5,6 +5,7 @@ on:
     branches:
       - 'master'
       - 'week2'
+      - 'week2_pr2'
 
 jobs:
 
@@ -25,3 +26,29 @@ jobs:
       run: |
         kubectl create -f week2/minio-standalone.yaml
         kubectl get pods
+
+  minio-client-tests:
+    runs-on: ubuntu-latest
+    name: run minio docker and perform tests
+    steps:
+      - uses: actions/checkout@v2
+      - name: install requirement
+        run: |
+          pip install -r week2/requirement.txt
+
+      - name: run minio docker
+        run: |
+          mkdir -p $PWD/minio/data
+          docker run \
+           -p 9000:9000 \
+           -p 9090:9090 \
+           -d \
+           --name minio \
+           -v $PWD/minio/data:/data \
+           -e "MINIO_ROOT_USER=minioadmin" \
+           -e "MINIO_ROOT_PASSWORD=minioadmin" \
+           quay.io/minio/minio server /data --console-address ":9090"
+
+      - name: run tests
+        run: |
+          pytest week2/test_minio_client.py
