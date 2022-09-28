@@ -46,12 +46,13 @@ def main():
             if step % opt.log_freq == 0:
                 writer.add_scalar('mse loss', loss.item(), step)
                 wandb.log({"mse loss": loss.item()}, step=step)
+                wandb.watch(diffusor)
                 print(loss.item())
             if (step + 1) % opt.save_freq == 0:
                 torch.save(ddpm.state_dict(), os.path.join(opt.checkpoint_dir, 'weights', 'latest.pth'))
 
             step += 1
-            wandb.watch(diffusor)
+
 
         ddpm.eval()
         samples = ddpm.sample(16, (1, 28, 28))
