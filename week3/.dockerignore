@@ -1,0 +1,7 @@
+cache
+*.pt
+*.pth
+venv
+wandb
+data
+checkpoints

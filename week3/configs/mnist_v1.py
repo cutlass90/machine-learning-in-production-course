@@ -1,10 +1,9 @@
 class Config:
     def __init__(self):
-        self.project_name = "Denoising-Diffusion-Probabilistic-Models paper implementation"
         self.lr = 2e-4
         self.device = 'cuda:0'
         self.checkpoint_dir = 'checkpoints/mnist_v3'
-        self.log_freq = 100
+        self.log_freq = 50
         self.save_freq = 1000
         # self.load_path = 'checkpoints/mnist_v3/weights/latest.pth'
         self.load_path = ''
