@@ -14,5 +14,5 @@ docker build -t sd-mnist:latest .
 ```
 ### then run training inside the container
 ```angular2html
-docker run -it --gpu all sd-mnist:latest
+docker run -it --gpus all sd-mnist:latest
 ```
