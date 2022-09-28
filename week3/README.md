@@ -16,3 +16,5 @@ docker build -t sd-mnist:latest .
 ```angular2html
 docker run -it --gpus all sd-mnist:latest
 ```
+
+### Training log example (wandb) you can find [here](https://wandb.ai/cutlass90/uncategorized/runs/7hqk753n?workspace=user-cutlass90)
