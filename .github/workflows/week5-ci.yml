@@ -24,19 +24,18 @@ jobs:
         dockerfile: ./week5/Dockerfile
         context: ./week5
 
-  deploy2cloud_run:
-    steps:
-      - id: auth
-        uses: google-github-actions/auth@v0
-        with:
-          credentials_json: ${{ secrets.GCLOUD_SERVICE_KEY }}
+    - name: deploy
+    - id: auth
+      uses: google-github-actions/auth@v0
+      with:
+        credentials_json: ${{ secrets.GCLOUD_SERVICE_KEY }}
 
-      - name: Deploy to Cloud Run
-        uses: google-github-actions/deploy-cloudrun@v0
-        with:
-          image: gcr.io/sd-concept-project/sd-concept:latest
-          service: streamlit-ui-service
-          region: us-east1
+    - name: Deploy to Cloud Run
+      uses: google-github-actions/deploy-cloudrun@v0
+      with:
+        image: gcr.io/sd-concept-project/sd-concept:latest
+        service: streamlit-ui-service
+        region: us-east1
 
-      - name: Use output
-        run: curl "${{ steps.deploy.outputs.url }}"
+    - name: Use output
+      run: curl "${{ steps.deploy.outputs.url }}"
