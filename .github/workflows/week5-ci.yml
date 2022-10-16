@@ -24,7 +24,6 @@ jobs:
         dockerfile: ./week5/Dockerfile
         context: ./week5
 
-    - name: deploy
     - id: auth
       uses: google-github-actions/auth@v0
       with:
