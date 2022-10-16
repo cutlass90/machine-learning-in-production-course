@@ -13,16 +13,16 @@ jobs:
     name: build docker image and deploy to cloud run
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: RafikFarhad/push-to-gcr-github-action@v4.1
-      with:
-        gcloud_service_key: ${{ secrets.GCLOUD_SERVICE_KEY }} # can be base64 encoded or plain text
-        registry: gcr.io
-        project_id: sd-concept-project
-        image_name: sd-concept
-        image_tag: latest
-        dockerfile: ./week5/Dockerfile
-        context: ./week5
+#    - uses: actions/checkout@v2
+#    - uses: RafikFarhad/push-to-gcr-github-action@v4.1
+#      with:
+#        gcloud_service_key: ${{ secrets.GCLOUD_SERVICE_KEY }} # can be base64 encoded or plain text
+#        registry: gcr.io
+#        project_id: sd-concept-project
+#        image_name: sd-concept
+#        image_tag: latest
+#        dockerfile: ./week5/Dockerfile
+#        context: ./week5
 
     - id: auth
       uses: google-github-actions/auth@v0
@@ -30,11 +30,5 @@ jobs:
         credentials_json: ${{ secrets.GCLOUD_SERVICE_KEY }}
 
     - name: Deploy to Cloud Run
-      uses: google-github-actions/deploy-cloudrun@v0
-      with:
-        image: gcr.io/sd-concept-project/sd-concept:latest
-        service: streamlit-ui-service
-        region: us-east1
+      run: gcloud run deploy sd-concept-project --image=gcr.io/sd-concept-project/sd-concept:latest --max-instances=10 --min-instances=1 --port=1234 --region=us-east1 --cpu=4 --memory=8Gi
 
-    - name: Use output
-      run: curl "${{ steps.deploy.outputs.url }}"
