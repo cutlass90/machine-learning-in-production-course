@@ -26,18 +26,18 @@ def save_uploadedfile(uploadedfile, path2save):
         f.write(uploadedfile.getbuffer())
     return st.success(f"Saved File:{uploadedfile.name} to {path2save}")
 
-def prepare():
-    os.makedirs('training_images', exist_ok=True)
-    os.makedirs('trained_models', exist_ok=True)
 
 def main():
-    prepare()
+
+    os.makedirs('trained_models', exist_ok=True)
     st.header('You Can Be Anyone You Want')
     st.image('static/a_portrait.png')
 
     project_name = st.text_input('project name', value='superhero_project') + str(random.randint(10000, 99999))
     if not st.session_state.get('project_name', False):
         st.session_state['project_name'] = project_name
+    training_images_folder = os.path.join('training_images', st.session_state['project_name'])
+    os.makedirs(training_images_folder, exist_ok=True)
     class_word = st.selectbox(
         'What do you describe best',
         ('person', 'man', 'woman'))
@@ -50,8 +50,8 @@ def main():
     st.text('Upload up to 5 photos with your face and push START TRAINING button. Note only one face per image is supported right now.')
     uploaded_files = st.file_uploader(label='face_images', type=['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG'], accept_multiple_files=True)
     for uploaded_file in uploaded_files:
-        save_uploadedfile(uploaded_file, 'training_images')
-        st.image(os.path.join('training_images', uploaded_file.name))
+        save_uploadedfile(uploaded_file, training_images_folder)
+        st.image(os.path.join(training_images_folder, uploaded_file.name))
 
     if not st.session_state.get('is_training_finished'):
         if st.button(label='START TRAINING'):
@@ -60,7 +60,7 @@ def main():
 
             download_files(dataset)
             command = f"python main.py --base configs/stable-diffusion/v1-finetune_unfrozen.yaml -t --actual_resume weights/model.ckpt --reg_data_root regularization_images/{dataset} -n {st.session_state['project_name']}" + \
-                      f" --gpus 0, --data_root training_images --max_training_steps {max_training_steps} --class_word {class_word} --token {token} --no-test"
+                      f" --gpus 0, --data_root {training_images_folder} --max_training_steps {max_training_steps} --class_word {class_word} --token {token} --no-test"
             print(command)
             p = subprocess.Popen(command.split(" "))
             p.wait()

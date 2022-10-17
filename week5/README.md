@@ -1,6 +1,6 @@
-1. streamlit app that do nothing. just page
-2. deploy at cloudrun with CI
-3. add training and inference
+1. [Done]streamlit app that do nothing. just page
+2. [Done]deploy at cloudrun with CI
+3. [in progress]add training and inference
 4. add fast api with backend
 5. add queues
 6. add billing
@@ -23,6 +23,9 @@ docker push gcr.io/sd-concept-project/sd-concept:latest
 ```
 ```angular2html
 gcloud run deploy sd-concept-project --image=gcr.io/sd-concept-project/sd-concept:latest --max-instances=10 --min-instances=1 --port=1234 --region=us-east1 --cpu=4 --memory=8Gi
+```
+```angular2html
+docker run -p 1234:1234 --gpus all -it -v /home/nazar/machine_learning_in_production_course/week5/weights/:/workspace/src/weights sd-concept:latest /bin/bash
 ```
 Service URL: https://sd-concept-project-ylwlqo73vq-ue.a.run.app
 ```angular2html
