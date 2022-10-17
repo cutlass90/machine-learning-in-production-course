@@ -6,5 +6,6 @@ COPY ./requirements.txt ./src/requirements.txt
 WORKDIR ./src
 RUN pip3 install --no-cache-dir -r requirements.txt
 COPY . ./
+RUN pip3 install -e .
 
 CMD ["streamlit", "run", "streamlit_demo.py", "--server.port", "1234"]
