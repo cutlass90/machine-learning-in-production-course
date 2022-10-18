@@ -60,23 +60,21 @@ def main():
             save_uploadedfile(uploaded_file, training_images_folder)
             st.image(os.path.join(training_images_folder, uploaded_file.name))
 
-        if not st.session_state.get('is_training_finished'):
-            if st.button(label='CREATE CONCEPT'):
-                st.text(f'Creating Concept {token} is in progress. Wait until it finished (~ 1 hour)')
-                st.text(f'Do not close this browser tab')
-                with st.spinner('Creating...'):
-                    download_files(dataset)
-                    command = f"python main.py --base configs/stable-diffusion/v1-finetune_unfrozen.yaml -t --actual_resume weights/model.ckpt --reg_data_root regularization_images/{dataset} -n {st.session_state['project_name']}" + \
-                              f" --gpus 0, --data_root {training_images_folder} --max_training_steps {max_training_steps} --class_word {class_word} --token {token} --no-test"
-                    print(command)
-                    p = subprocess.Popen(command.split(" "))
-                    p.wait()
 
-                    st.session_state.is_training_finished = True
-                    st.experimental_rerun()
-                st.success('Done!')
+        if st.button(label='CREATE CONCEPT'):
+            st.text(f'Creating Concept {token} is in progress. Wait until it finished (~ 1 hour)')
+            st.text(f'Do not close this browser tab')
+            with st.spinner('Creating...'):
+                download_files(dataset)
+                command = f"python main.py --base configs/stable-diffusion/v1-finetune_unfrozen.yaml -t --actual_resume weights/model.ckpt --reg_data_root regularization_images/{dataset} -n {st.session_state['project_name']}" + \
+                          f" --gpus 0, --data_root {training_images_folder} --max_training_steps {max_training_steps} --class_word {class_word} --token {token} --no-test"
+                print(command)
+                p = subprocess.Popen(command.split(" "))
+                p.wait()
 
-        else:
+                st.session_state.is_training_finished = True
+            st.success('Done!')
+
             st.text(f'Training concept {token} is finished! Download it below.')
 
             # datetime object containing current date and time
@@ -123,7 +121,7 @@ def main():
                 p.wait()
             st.success('Done!')
 
-        out_dirs = sorted(glob(f'{outdir}/*'), key=lambda x: os.path.getmtime(x))
+        out_dirs = sorted(glob(f'{outdir}/*'), key=lambda x: os.path.getmtime(x), reverse=True)
         if out_dirs:
             out_dir = st.selectbox(
                 'select results to view',
