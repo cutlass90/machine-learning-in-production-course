@@ -2,3 +2,7 @@ cache
 *.pt
 *.pth
 *.ckpt
+regularization_images
+trained_models
+training_images
+weights

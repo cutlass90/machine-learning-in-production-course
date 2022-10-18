@@ -25,9 +25,8 @@ docker push gcr.io/sd-concept-project/sd-concept:latest
 gcloud run deploy sd-concept-project --image=gcr.io/sd-concept-project/sd-concept:latest --max-instances=10 --min-instances=1 --port=1234 --region=us-east1 --cpu=4 --memory=8Gi
 ```
 ```angular2html
-docker run -p 1234:1234 --gpus all -it -v /home/nazar/machine_learning_in_production_course/week5/weights/:/workspace/src/weights sd-concept:latest /bin/bash
+docker run -p 1234:1234 --gpus all -it -v /home/nazar/machine_learning_in_production_course/week5/:/workspace/src/weights sd-concept:latest /bin/bash
 ```
-Service URL: https://sd-concept-project-ylwlqo73vq-ue.a.run.app
 ```angular2html
 gcloud run services delete sd-concept-project
 ```
