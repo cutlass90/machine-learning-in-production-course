@@ -37,6 +37,7 @@ jobs:
     - name: Deploy to cluster GKE
       run: |
         gcloud container clusters get-credentials sd-concept-cluster --zone us-central1-a --project sd-concept-project
+        kubectl delete deployment sd-concept-deployment
         kubectl apply -f ./week5/deployment.yaml
 
 #    - name: Deploy to Cloud Run

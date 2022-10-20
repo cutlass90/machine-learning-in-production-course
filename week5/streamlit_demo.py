@@ -39,7 +39,7 @@ def main():
 
     with train:
         st.header("Here you can crate your own Concept and then use it to unlimited personalized arts generation.")
-        st.text("Version 1.2")
+        st.text("Version 1.3")
 
         project_name = st.text_input('project name', value='superhero_project') + str(random.randint(10000, 99999))
         if not st.session_state.get('project_name', False):

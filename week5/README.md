@@ -62,6 +62,9 @@ kubectl exec -it sd-concept-cluster-f6fdccc45-nw7gx -- /bin/sh
 ```angular2html
 kubectl logs -f <PODNAME>
 ```
+```angular2html
+kubectl delete deployment sd-concept-deployment
+```
 
 <br>
 нод пули треба для того щоб мати різні відеокарти<br>
