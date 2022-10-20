@@ -38,7 +38,7 @@ def main():
     train, inference = st.tabs(["Create your own Concept", "Generate personalized portraits"])
 
     with train:
-        st.header("Here you can crate your own Concept and then use it to unlimited personalized arts generation. Version 1.0")
+        st.header("Here you can crate your own Concept and then use it to unlimited personalized arts generation. Version 1.1")
 
         project_name = st.text_input('project name', value='superhero_project') + str(random.randint(10000, 99999))
         if not st.session_state.get('project_name', False):
@@ -60,34 +60,34 @@ def main():
             save_uploadedfile(uploaded_file, training_images_folder)
             st.image(os.path.join(training_images_folder, uploaded_file.name), width=400)
 
+        if glob(os.path.join(training_images_folder, '*.*')): # if user upload images then draw "create concept" button
+            if st.button(label='CREATE CONCEPT'):
+                st.text(f'Creating Concept {token} is in progress. Wait until it finished (~ 1 hour)')
+                st.text(f'Do not close this browser tab')
+                with st.spinner('Creating...'):
+                    download_files(dataset)
+                    command = f"python main.py --base configs/stable-diffusion/v1-finetune_unfrozen.yaml -t --actual_resume weights/model.ckpt --reg_data_root regularization_images/{dataset} -n {st.session_state['project_name']}" + \
+                              f" --gpus 0, --data_root {training_images_folder} --max_training_steps {max_training_steps} --class_word {class_word} --token {token} --no-test"
+                    print(command)
+                    p = subprocess.Popen(command.split(" "))
+                    p.wait()
 
-        if st.button(label='CREATE CONCEPT'):
-            st.text(f'Creating Concept {token} is in progress. Wait until it finished (~ 1 hour)')
-            st.text(f'Do not close this browser tab')
-            with st.spinner('Creating...'):
-                download_files(dataset)
-                command = f"python main.py --base configs/stable-diffusion/v1-finetune_unfrozen.yaml -t --actual_resume weights/model.ckpt --reg_data_root regularization_images/{dataset} -n {st.session_state['project_name']}" + \
-                          f" --gpus 0, --data_root {training_images_folder} --max_training_steps {max_training_steps} --class_word {class_word} --token {token} --no-test"
-                print(command)
-                p = subprocess.Popen(command.split(" "))
-                p.wait()
+                    st.session_state.is_training_finished = True
+                st.success('Done!')
 
-                st.session_state.is_training_finished = True
-            st.success('Done!')
+                st.text(f'Training concept {token} is finished! Download it below.')
 
-            st.text(f'Training concept {token} is finished! Download it below.')
+                # datetime object containing current date and time
+                dt_string = datetime.now().strftime("%d_%m_%YT%H_%M_%S")
+                file_name = dt_string + "_" + st.session_state['project_name'] + "_" + str(
+                    max_training_steps) + "_max_training_steps_" + token + "_token_" + class_word + "_class_word.ckpt"
+                file_name = file_name.replace(" ", "_")
+                l = [p for p in glob(f"logs/*/checkpoints/last.ckpt")]
+                last_checkpoint_file = [p for p in l if st.session_state['project_name'] in p][0]
+                copyfile(last_checkpoint_file, f"{trained_models_folder}/{file_name}")
 
-            # datetime object containing current date and time
-            dt_string = datetime.now().strftime("%d_%m_%YT%H_%M_%S")
-            file_name = dt_string + "_" + st.session_state['project_name'] + "_" + str(
-                max_training_steps) + "_max_training_steps_" + token + "_token_" + class_word + "_class_word.ckpt"
-            file_name = file_name.replace(" ", "_")
-            l = [p for p in glob(f"logs/*/checkpoints/last.ckpt")]
-            last_checkpoint_file = [p for p in l if st.session_state['project_name'] in p][0]
-            copyfile(last_checkpoint_file, f"{trained_models_folder}/{file_name}")
-
-            with open(f"{trained_models_folder}/{file_name}", 'rb') as f:
-                st.download_button(f'Download {token} concept', f, file_name=f"{trained_models_folder}/{file_name}")
+                with open(f"{trained_models_folder}/{file_name}", 'rb') as f:
+                    st.download_button(f'Download {token} concept', f, file_name=f"{trained_models_folder}/{file_name}")
 
     with inference:
         COL_N = 5
