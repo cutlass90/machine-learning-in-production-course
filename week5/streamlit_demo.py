@@ -38,7 +38,7 @@ def main():
     train, inference = st.tabs(["Create your own Concept", "Generate personalized portraits"])
 
     with train:
-        st.header("Here you can crate your own Concept and then use it to unlimited personalized arts generation")
+        st.header("Here you can crate your own Concept and then use it to unlimited personalized arts generation. Version 1.0")
 
         project_name = st.text_input('project name', value='superhero_project') + str(random.randint(10000, 99999))
         if not st.session_state.get('project_name', False):
@@ -58,7 +58,7 @@ def main():
         uploaded_files = st.file_uploader(label='face_images', type=['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG'], accept_multiple_files=True)
         for uploaded_file in uploaded_files:
             save_uploadedfile(uploaded_file, training_images_folder)
-            st.image(os.path.join(training_images_folder, uploaded_file.name))
+            st.image(os.path.join(training_images_folder, uploaded_file.name), width=400)
 
 
         if st.button(label='CREATE CONCEPT'):
