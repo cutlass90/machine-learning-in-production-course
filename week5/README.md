@@ -3,8 +3,10 @@
 3. [Done]add training and inference
 3.1 [Done]deploy at GKE with CI
 4. add fast api with backend
+4.5 Jobs instead deployments for training
 5. add queues
 6. add billing
+7. add testss
 
 ## Useful commands:
 ### Enable ability to work with gcloud image registry
@@ -65,12 +67,12 @@ kubectl logs -f <PODNAME>
 ```angular2html
 kubectl delete deployment sd-concept-deployment
 ```
+```angular2html
+kubectl rollout restart deployment sd-concept-deployment
+```
 
 <br>
 нод пули треба для того щоб мати різні відеокарти<br>
 регіон більше зони - для того щоб не падало і вічно жило<br>
 регіон вміщує декілька зон<br>
 
-
-
-TODO if user did not upload images do not start training
