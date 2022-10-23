@@ -5,3 +5,4 @@ regularization_images
 trained_models
 training_images
 weights
+*.zip
