@@ -1,5 +1,6 @@
 import os
 import time
+import requests
 from glob import glob
 
 import streamlit as st
@@ -39,6 +40,12 @@ def main():
                 my_bar = st.progress(0)
                 st.text(f'Your Concept creation is in progress. Wait until it finished (~ 1 hour)')
                 st.text(f'Important. Do not close or reload this browser tab until the end.')
+
+                files = {'media': ('img', open('prompts/astronaut/einstein/e4ab357c9af988bf9f0b257242af19052e66026f032c20c10fbce1a1.jpeg', 'rb'))}
+                response = requests.post('http://127.0.0.1:8000/train', files=files)
+                print(response)
+
+
                 ph = st.empty()
                 for i in range(3600):
                     percent_complete = i / 3600

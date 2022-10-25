@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ui-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sd-concept-ui # all pods with this label belong to this deployment
+  template:
+    metadata:
+      labels:
+        app: sd-concept-ui
+    spec:
+      containers:
+      - name: sd-concept-ui-app
+        image: gcr.io/sd-concept-project/sd-concept-ui:latest
+        ports:
+        - containerPort: 8501
+      nodeSelector:
+        type: streamlit-ui
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sd-concept-ui-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: sd-concept-ui
+  ports:
+  - port: 80
+    targetPort: 8501
