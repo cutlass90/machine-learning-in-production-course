@@ -41,13 +41,13 @@ def main():
                 st.text(f'Your Concept creation is in progress. Wait until it finished (~ 1 hour)')
                 st.text(f'Important. Do not close or reload this browser tab until the end.')
 
-                files = {'media': ('img', open('prompts/astronaut/einstein/e4ab357c9af988bf9f0b257242af19052e66026f032c20c10fbce1a1.jpeg', 'rb'))}
-                response = requests.post('http://127.0.0.1:8000/train', files=files)
-                print(response)
-
+                files = [('images_list', (f'image{i}', uploaded_photo.getvalue(), 'image/png')) for i, uploaded_photo in enumerate(uploaded_photos)]
+                response = requests.post('http://0.0.0.0:8000', data={"checkpoint_path": "path to checkpoint"}, files=files)
+                st.write(response)
 
                 ph = st.empty()
                 for i in range(3600):
+                    st.write(response)
                     percent_complete = i / 3600
                     my_bar.progress(percent_complete)
                     time.sleep(1)
