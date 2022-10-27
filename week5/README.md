@@ -76,3 +76,5 @@ kubectl rollout restart deployment sd-concept-deployment
 регіон більше зони - для того щоб не падало і вічно жило<br>
 регіон вміщує декілька зон<br>
 
+[streamlit async good article](https://betterprogramming.pub/how-to-make-http-requests-in-streamlit-app-f22a77fd1ed7)
+
