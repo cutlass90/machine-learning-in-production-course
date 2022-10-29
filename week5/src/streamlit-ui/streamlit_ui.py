@@ -41,8 +41,8 @@ def main():
                 st.text(f'Your Concept creation is in progress. Wait until it finished (~ 1 hour)')
                 st.text(f'Important. Do not close or reload this browser tab until the end.')
 
-                files = [('images_list', (f'image{i}', uploaded_photo.getvalue(), 'image/png')) for i, uploaded_photo in enumerate(uploaded_photos)]
-                response = requests.post('http://0.0.0.0:8000', data={"checkpoint_path": "path to checkpoint"}, files=files)
+                files = [('images_list', (uploaded_photo.name, uploaded_photo.getvalue(), 'image/png')) for i, uploaded_photo in enumerate(uploaded_photos)]
+                response = requests.post('http://0.0.0.0:8000/train', files=files)
                 st.write(response)
 
                 ph = st.empty()
