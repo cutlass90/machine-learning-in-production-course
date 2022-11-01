@@ -7,3 +7,5 @@ WORKDIR ./src
 RUN pip3 install --no-cache-dir -r requirements.txt
 COPY . ./
 RUN pip3 install -e .
+
+ENTRYPOINT ["python", "train.py"]
