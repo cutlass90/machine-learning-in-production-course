@@ -4,13 +4,11 @@ DEBUG = True
 
 @dataclass
 class Config:
-    outdir = 'outdir'
+    # general
     project_name = 'sd-concept-project'
     results_bucket_name = 'sd-concept-results'
+    web_server_port = 8000
     checkpoints_bucket_name = 'sd-concept-checkpoints-storage'
-
-    checkpoints_dir = 'checkpoints'
-    inference_port = 8283
 
 
 opt = Config()

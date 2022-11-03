@@ -2,6 +2,7 @@ import os
 import uuid
 from typing import List
 
+import requests
 import uvicorn
 from fastapi import FastAPI, File, UploadFile
 from google.cloud import aiplatform
@@ -10,6 +11,8 @@ from google.cloud import storage
 from config import opt
 
 client = aiplatform.gapic.JobServiceClient(client_options={"api_endpoint": "us-central1-aiplatform.googleapis.com"})
+storage_client = storage.Client(opt.project_name)
+
 
 def write_image(source_file, destination_blob_name):
     storage_client = storage.Client(opt.project_name)
@@ -70,11 +73,20 @@ async def strarttraining(images_list: List[UploadFile] = File(...)):
 
     return str(user_id)
 
+@app.get("/get-concepts")
+def get_concepts():
+    blobs = storage_client.list_blobs(opt.checkpoints_bucket_name)
+    blobs_names = [blob.name for blob in blobs]
+    return blobs_names
 
-@app.get("/generate-image")
-def generate_image(prompt_id):
-    pass
+@app.post("/generate-images")
+def generate_images(prompt: str=File(...), checkpoint_name: str=File(...)):
+    checkpoint_name = checkpoint_name.replace('checkpoint.ckpt', '')
+    imgs_names = [f'{str(uuid.uuid4())}.jpg' for _ in range(opt.n_samples)]
+    requests.post(f'http://0.0.0.0:{opt.inference_port}', data={'user_id': checkpoint_name, 'prompt': prompt, 'imgs_names': imgs_names})
+    return imgs_names
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    # uvicorn.run("server:app", host="0.0.0.0", port=opt.web_server_port, reload=True, access_log=False)
+    uvicorn.run("server:app", host="0.0.0.0", port=opt.web_server_port)

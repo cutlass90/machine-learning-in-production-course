@@ -5,7 +5,12 @@ from glob import glob
 
 import streamlit as st
 from PIL import Image
+from config import opt
+from google.cloud import storage
 
+
+storage_client = storage.Client(opt.project_name)
+results_bucket = storage_client.get_bucket(opt.results_bucket_name)
 
 def main():
     st.set_page_config(layout="wide")
@@ -18,12 +23,24 @@ def main():
     with inference:
         st.header("Here you can generate personalized image arts using created earlier Concept")
 
-        concepts_list = ['concept1', 'concept2']
+        concepts_list = requests.get(f'http://0.0.0.0:{opt.web_server_port}/get-concepts')
+        concepts_list = [i[1:-1] for i in concepts_list.text[1:-1].split(',')]
         concept = st.selectbox('choose your concept to use', concepts_list)
 
         style = st.selectbox('choose style', [os.path.basename(s) for s in sorted(glob('prompts/*'))])
+        prompt = open(os.path.join('prompts', style, 'prompt'), 'r').read()
         images = sorted(glob(os.path.join('prompts', style, '*/*.jpeg')))
         st.image(images, width=200)
+
+        if st.button('generate'):
+            st.text('Generating your personal arts. Wait a moment.')
+            data = {'prompt': prompt, 'checkpoint_name':concept}
+            blob_names = requests.post(f'http://0.0.0.0:{opt.web_server_port}/generate-images', data=data)
+            blob_names = [i[1:-1] for i in blob_names.text[1:-1].split(',')]
+            for blob_name in blob_names:
+                blob = results_bucket.blob(blob_name)
+                img = blob.download_as_bytes()
+                st.image(img)
 
     with train:
         st.header("Here you can crate your own Concept and then use it to unlimited personalized arts generation.")

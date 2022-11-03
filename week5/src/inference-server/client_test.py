@@ -1,5 +1,6 @@
 import requests
+from config import opt
 
-responce = requests.post('http://35.232.114.226', data={'user_id':'nazarshmatko', 'prompt':'a photo of nazarshmatko person', 'imgs_names': ['isdfsdfmg3.jpg', 'im3rsdfg4.jpg']})
+responce = requests.post(f'http://0.0.0.0:{opt.inference_port}', data={'user_id':'nazarshmatko', 'prompt':'a photo of nazarshmatko person', 'imgs_names': ['sdjiu3f.jpg']})
 
 print(responce)

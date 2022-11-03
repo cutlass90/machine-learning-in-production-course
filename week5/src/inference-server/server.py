@@ -56,5 +56,5 @@ def inference(user_id: str = File(...), prompt: str = File(...), imgs_names: Lis
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8283)
+    uvicorn.run("server:app", host="0.0.0.0", port=opt.inference_port)
     # make_inference('nazarshmatko', 'a photo of nazarshmatko person', '2')
