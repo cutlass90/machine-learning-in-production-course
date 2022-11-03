@@ -13,16 +13,17 @@ from config import opt
 
 app = FastAPI()
 storage_client = storage.Client(opt.project_name)
-bucket = storage_client.get_bucket(opt.bucket_name)
+results_bucket = storage_client.get_bucket(opt.results_bucket_name)
+checkpoints_bucket = storage_client.get_bucket(opt.checkpoints_bucket_name)
 
 
 def save_img_to_storage(blob_name, path2img):
-    blob = bucket.blob(blob_name)
+    blob = results_bucket.blob(blob_name)
     blob.upload_from_filename(path2img)
 
 
 def download_checkpoint(user_id, save_path):
-    blob = bucket.blob(user_id + 'checkpoint.ckpt')
+    blob = checkpoints_bucket.blob(user_id + 'checkpoint.ckpt')
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
     blob.download_to_filename(save_path)
 

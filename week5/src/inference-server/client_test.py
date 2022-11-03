@@ -1,5 +1,5 @@
 import requests
 
-responce = requests.post('http://0.0.0.0:8283', data={'user_id':'nazarshmatko', 'prompt':'a photo of nazarshmatko person', 'imgs_names': ['img1.jpg', 'img2.jpg']})
+responce = requests.post('http://35.232.114.226', data={'user_id':'nazarshmatko', 'prompt':'a photo of nazarshmatko person', 'imgs_names': ['isdfsdfmg3.jpg', 'im3rsdfg4.jpg']})
 
 print(responce)
