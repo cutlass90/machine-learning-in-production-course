@@ -70,7 +70,16 @@ kubectl delete deployment sd-concept-deployment
 ```angular2html
 kubectl rollout restart deployment sd-concept-deployment
 ```
-
+```angular2html
+kubectl get deployments
+```
+```angular2html
+kubectl delete deployment <deployment-name>
+```
+grant permissions to service account to write to storage
+```angular2html
+https://serverfault.com/questions/915859/cant-write-any-file-into-bucket-only-read-after-gcfuse
+```
 <br>
 нод пули треба для того щоб мати різні відеокарти<br>
 регіон більше зони - для того щоб не падало і вічно жило<br>
