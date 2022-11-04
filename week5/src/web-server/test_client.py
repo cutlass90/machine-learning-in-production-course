@@ -21,5 +21,5 @@ def test_generate_images():
     assert responce[0][-4:] == '.jpg'
 
 if __name__ == "__main__":
-    # test_get_concepts()
-    test_generate_images()
+    test_get_concepts()
+    # test_generate_images()

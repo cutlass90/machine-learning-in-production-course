@@ -1,5 +1,5 @@
-build:
-	docker build --progress=plain -t sd-concept-ui:latest ./
+buildimage:
+	cp ../config.py . && docker build --progress=plain -t sd-concept-ui:latest ./
 
 pushimage:
 	docker push gcr.io/sd-concept-project/sd-concept-ui:latest
@@ -9,6 +9,9 @@ tagimage:
 
 runimage:
 	docker run -p 8501:8501 -d sd-concept-ui:latest
+
+runimagedebug:
+	docker run -p 8501:8501 -it -v /home/nazar/machine-learning-in-production-course/week5/src/secrets:/app/secrets sd-concept-ui:latest
 
 runui:
 	streamlit run streamlit_ui.py --server.maxUploadSize 3000

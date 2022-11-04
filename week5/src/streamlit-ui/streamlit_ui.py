@@ -9,7 +9,12 @@ from config import opt
 from google.cloud import storage
 
 
-storage_client = storage.Client(opt.project_name)
+if opt.debug:
+    from google.oauth2 import service_account
+    credentials = service_account.Credentials.from_service_account_file('secrets/sd-concept-project-14c11c803fff.json')
+    storage_client = storage.Client(opt.project_name, credentials=credentials)
+else:
+    storage_client = storage.Client(opt.project_name)
 results_bucket = storage_client.get_bucket(opt.results_bucket_name)
 
 def main():
@@ -23,7 +28,7 @@ def main():
     with inference:
         st.header("Here you can generate personalized image arts using created earlier Concept")
 
-        concepts_list = requests.get(f'http://0.0.0.0:{opt.web_server_port}/get-concepts')
+        concepts_list = requests.get(f'http://{opt.host_ip}:{opt.web_server_port}/get-concepts')
         concepts_list = [i[1:-1] for i in concepts_list.text[1:-1].split(',')]
         concept = st.selectbox('choose your concept to use', concepts_list)
 
@@ -35,7 +40,7 @@ def main():
         if st.button('generate'):
             st.text('Generating your personal arts. Wait a moment.')
             data = {'prompt': prompt, 'checkpoint_name':concept}
-            blob_names = requests.post(f'http://0.0.0.0:{opt.web_server_port}/generate-images', data=data)
+            blob_names = requests.post(f'http://{opt.host_ip}:{opt.web_server_port}/generate-images', data=data)
             blob_names = [i[1:-1] for i in blob_names.text[1:-1].split(',')]
             for blob_name in blob_names:
                 blob = results_bucket.blob(blob_name)
@@ -59,7 +64,7 @@ def main():
                 st.text(f'Important. Do not close or reload this browser tab until the end.')
 
                 files = [('images_list', (uploaded_photo.name, uploaded_photo.getvalue(), 'image/png')) for i, uploaded_photo in enumerate(uploaded_photos)]
-                response = requests.post('http://0.0.0.0:8000/train', files=files)
+                response = requests.post(f'http://{opt.host_ip}:8000/train', files=files)
                 st.write(response)
 
                 ph = st.empty()

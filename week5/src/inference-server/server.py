@@ -12,7 +12,12 @@ from google.cloud import storage
 from config import opt
 
 app = FastAPI()
-storage_client = storage.Client(opt.project_name)
+if opt.debug:
+    from google.oauth2 import service_account
+    credentials = service_account.Credentials.from_service_account_file('secrets/sd-concept-project-14c11c803fff.json')
+    storage_client = storage.Client(opt.project_name, credentials=credentials)
+else:
+    storage_client = storage.Client(opt.project_name)
 results_bucket = storage_client.get_bucket(opt.results_bucket_name)
 checkpoints_bucket = storage_client.get_bucket(opt.checkpoints_bucket_name)
 
@@ -56,5 +61,5 @@ def inference(user_id: str = File(...), prompt: str = File(...), imgs_names: Lis
 
 
 if __name__ == "__main__":
-    uvicorn.run("server:app", host="0.0.0.0", port=opt.inference_port)
+    uvicorn.run("server:app", host=f"{opt.host_ip}", port=opt.inference_port)
     # make_inference('nazarshmatko', 'a photo of nazarshmatko person', '2')
