@@ -8,20 +8,14 @@ createcluster:
 	#kubectl label nodes <your-node-name> type=streamlit-ui
 	#kubectl label nodes <your-node-name> type=inference
 
-deploy:
-	kubectl apply -f deployment.yaml
 
 deletecluster:
 	gcloud container clusters delete sd-concept-cluster --zone us-central1-a
 
-build:
-	docker build --progress=plain -t sd-concept:latest ./
+runallcontainers:
+	cd src/streamlit-ui && make runimage && cd ../web-server && make runimage && cd ../inference-server && make runimage
 
-runimage:
-	docker run -p 1234:1234 --gpus all -d sd-concept:latest
+stopallcontainers:
+	docker ps -q | xargs docker stop
 
-pushimage:
-	docker push gcr.io/sd-concept-project/sd-concept:latest
 
-runimagedebug:
-	docker run -p 1234:1234 --gpus all -it -v /home/nazar/machine_learning_in_production_course/week5/weights:/workspace/src/weights sd-concept:latest /bin/bash
