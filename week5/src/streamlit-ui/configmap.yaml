@@ -4,3 +4,4 @@ metadata:
   name: sd-concept-config
 data:
   internal-url: web-server-service
+  inference-url: sd-concept-inference-service

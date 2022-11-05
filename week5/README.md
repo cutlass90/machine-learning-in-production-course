@@ -2,11 +2,11 @@
 2. [Done]deploy at cloudrun with CI
 3. [Done]add training and inference
 3.1 [Done]deploy at GKE with CI
-4. add fast api with backend
+4. [Done]add fast api with backend
 4.5 Jobs instead deployments for training
 5. add queues
 6. add billing
-7. add testss
+7. add tests
 
 ## Useful commands:
 ### Enable ability to work with gcloud image registry

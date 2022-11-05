@@ -89,7 +89,7 @@ def get_concepts():
 def generate_images(prompt: str=File(...), checkpoint_name: str=File(...)):
     checkpoint_name = checkpoint_name.replace('checkpoint.ckpt', '')
     imgs_names = [f'{str(uuid.uuid4())}.jpg' for _ in range(opt.n_samples)]
-    requests.post(f'http://{opt.host_ip}:{opt.inference_port}', data={'user_id': checkpoint_name, 'prompt': prompt, 'imgs_names': imgs_names})
+    requests.post(f'http://{opt.infer_host_ip}:{opt.inference_port}', data={'user_id': checkpoint_name, 'prompt': prompt, 'imgs_names': imgs_names})
     return imgs_names
 
 

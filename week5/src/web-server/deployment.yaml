@@ -23,6 +23,11 @@ spec:
             configMapKeyRef:
               name: sd-concept-config
               key: internal-url
+        - name: inference-url
+          valueFrom:
+            configMapKeyRef:
+              name: sd-concept-config
+              key: inference-url
       nodeSelector:
         type: streamlit-ui
 

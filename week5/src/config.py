@@ -22,6 +22,7 @@ class Config:
 
     #potrs
     host_ip = "172.17.0.1" if DEBUG else os.environ['internal-url']
+    infer_host_ip = "172.17.0.1" if DEBUG else os.environ['inference-url']
     web_server_port = 8000
     inference_port = 8283
 
