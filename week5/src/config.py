@@ -1,6 +1,7 @@
 from dataclasses import dataclass
+import os
 
-DEBUG = True
+DEBUG = False
 
 @dataclass
 class Config:
@@ -20,7 +21,7 @@ class Config:
     max_training_steps = 20 if DEBUG else 2000
 
     #potrs
-    host_ip = "172.17.0.1"
+    host_ip = "172.17.0.1" if DEBUG else os.environ['internal-url']
     web_server_port = 8000
     inference_port = 8283
 
