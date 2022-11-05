@@ -8,7 +8,7 @@ tagimage:
 	docker image tag sd-concept-ui:latest gcr.io/sd-concept-project/sd-concept-ui:latest
 
 runimage:
-	docker run -p 8501:8501 -d sd-concept-ui:latest
+	docker run -p 8501:8501 -d -v /home/nazar/machine-learning-in-production-course/week5/src/secrets:/app/secrets sd-concept-ui:latest
 
 runimagedebug:
 	docker run -p 8501:8501 -it -v /home/nazar/machine-learning-in-production-course/week5/src/secrets:/app/secrets sd-concept-ui:latest
