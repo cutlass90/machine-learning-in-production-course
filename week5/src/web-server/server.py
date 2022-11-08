@@ -11,7 +11,7 @@ from google.cloud import storage
 from config import opt
 
 # client = aiplatform.gapic.JobServiceClient(client_options={"api_endpoint": "us-central1-aiplatform.googleapis.com"})
-if opt.debug:
+if os.path.isfile('secrets/sd-concept-project-14c11c803fff.json'):
     from google.oauth2 import service_account
     credentials = service_account.Credentials.from_service_account_file('secrets/sd-concept-project-14c11c803fff.json')
     storage_client = storage.Client(opt.project_name, credentials=credentials)

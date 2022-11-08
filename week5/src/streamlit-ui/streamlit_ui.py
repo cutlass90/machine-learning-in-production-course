@@ -9,7 +9,7 @@ from config import opt
 from google.cloud import storage
 
 
-if opt.debug:
+if os.path.isfile('secrets/sd-concept-project-14c11c803fff.json'):
     from google.oauth2 import service_account
     credentials = service_account.Credentials.from_service_account_file('secrets/sd-concept-project-14c11c803fff.json')
     storage_client = storage.Client(opt.project_name, credentials=credentials)
