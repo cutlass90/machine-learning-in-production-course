@@ -10,16 +10,28 @@ def test_get_concepts():
     concepts_list = [i[1:-1] for i in concepts_list.text[1:-1].split(',')]
     assert 'nazarshmatkocheckpoint.ckpt' in concepts_list
 
-def test_generate_images():
+def test_generate_images_success():
     prompt = 'a photo of nazarshmatko person'
     concept = 'nazarshmatkocheckpoint.ckpt'
     responce = requests.post(f'http://0.0.0.0:{opt.web_server_port}/generate-images', data={'prompt': prompt, 'checkpoint_name': concept})
-    assert len(responce) > 0
+
+    print(responce)
     assert responce.status_code == 200
     responce = [i[1:-1] for i in responce.text[1:-1].split(',')]
     assert len(responce[0]) == 40
     assert responce[0][-4:] == '.jpg'
 
+
+def test_generate_images_fail():
+    prompt = 'a photo of nazarshmatko person'
+    concept = 'nazarshmatkocheckpoint.ckpt'
+    responce = requests.post(f'http://0.0.0.0:{opt.web_server_port}/generate-images', data={'prompt': prompt, 'checkpoint_name': concept})
+
+    print(responce)
+    assert responce.status_code == 200
+    assert responce.text[1:-1] == 'task failed'
+
 if __name__ == "__main__":
-    test_get_concepts()
-    # test_generate_images()
+    # test_get_concepts()
+    test_generate_images_success()
+    test_generate_images_fail()

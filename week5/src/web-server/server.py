@@ -1,12 +1,15 @@
 import os
+import time
 import uuid
 from typing import List
 
 import requests
+import pickle
 import uvicorn
 from fastapi import FastAPI, File, UploadFile
 # from google.cloud import aiplatform
 from google.cloud import storage
+import redis
 
 from config import opt
 
@@ -17,8 +20,16 @@ if os.path.isfile('secrets/sd-concept-project-14c11c803fff.json'):
     storage_client = storage.Client(opt.project_name, credentials=credentials)
 else:
     storage_client = storage.Client(opt.project_name)
-app = FastAPI()
 
+app = FastAPI()
+r = redis.Redis(host=opt.host_ip, port=opt.redis_port, db=0)
+
+
+def concept2checkpoint(concept):
+    return concept + 'checkpoint.ckpt'
+
+def checkpoint2concept(checkpoint):
+    return checkpoint.replace('checkpoint.ckpt', '')
 
 
 # def write_image(source_file, destination_blob_name):
@@ -82,17 +93,34 @@ app = FastAPI()
 @app.get("/get-concepts")
 def get_concepts():
     blobs = storage_client.list_blobs(opt.checkpoints_bucket_name)
-    blobs_names = [blob.name for blob in blobs]
-    return blobs_names
+    checkpoints = [blob.name for blob in blobs]
+    concepts = [checkpoint2concept(ch) for ch in checkpoints]
+    return concepts
 
 @app.post("/generate-images")
-def generate_images(prompt: str=File(...), checkpoint_name: str=File(...)):
-    checkpoint_name = checkpoint_name.replace('checkpoint.ckpt', '')
+def generate_images(prompt: str=File(...), concept: str=File(...)):
     imgs_names = [f'{str(uuid.uuid4())}.jpg' for _ in range(opt.n_samples)]
-    requests.post(f'http://{opt.infer_host_ip}:{opt.inference_port}', data={'user_id': checkpoint_name, 'prompt': prompt, 'imgs_names': imgs_names})
-    return imgs_names
+    task = {
+        'taskid': str(uuid.uuid4()),
+        'prompt': prompt,
+        'checkpoint_name': concept2checkpoint(concept),
+        'imgs_names': imgs_names
+    }
+    print(task)
+    r.rpush(opt.task_queue_name, pickle.dumps(task))
+    while True:
+        time.sleep(0.5)
+        task_status = r.get(task['taskid'])
+        if task_status:
+            task_status = task_status.decode()
+            r.delete(task['taskid'])
+            if task_status == 'done':
+                return imgs_names
+            elif task_status == 'fail':
+                return 'task failed'
+
 
 
 if __name__ == "__main__":
     # uvicorn.run("server:app", host=f"{opt.host_ip}", port=opt.web_server_port, reload=True, access_log=False)
-    uvicorn.run("server:app", host=f"{opt.host_ip}", port=opt.web_server_port)
+    uvicorn.run("server:app", host=f"localhost", port=opt.web_server_port)

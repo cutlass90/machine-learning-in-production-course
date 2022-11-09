@@ -23,16 +23,23 @@ class Config:
     machine_type = "a2-highgpu-1g"
     accelerator_type = "NVIDIA_TESLA_A100"
 
-    #potrs
-    host_ip = os.environ['internal-url'] if os.environ.get('internal-url') else "172.17.0.1"
-    infer_host_ip = os.environ['inference-url'] if os.environ.get('inference-url') else "172.17.0.1"
+    #network
+    if os.environ.get('internal-url'): # k8s
+        host_ip = os.environ['internal-url']
+    elif os.path.isfile('/home/nazar/analyze_VGG.html'): #local
+        host_ip = '0.0.0.0'
+    else: #docker
+        host_ip = "172.17.0.1"
     web_server_port = 8000
-    inference_port = 8283
+    redis_port = 8123
 
     #inference
     n_samples = 1
     outdir = 'outdir'
     checkpoints_dir = 'checkpoints'
+
+    #redis
+    task_queue_name = 'tasks_queue'
 
 
 

@@ -18,12 +18,20 @@ deletecluster:
 	gcloud container clusters delete sd-concept-cluster --zone us-central1-a
 
 runallcontainers:
-	cd src/streamlit-ui && make runimage && cd ../web-server && make runimage && cd ../inference-server && make runimage
+	cd src/streamlit-ui && make runimage
+	cd src/web-server && make runimage
+	cd src/inference-server && make runimage
+	docker run -d -p 8123:6379 redis
 
 stopallcontainers:
 	docker ps -q | xargs docker stop
 
 deletealldeploymets:
 	kubectl delete all --all -n default
+
+buildall:
+	cd src/inference-server && make buildimage
+	cd src/streamlit-ui && make buildimage
+	cd src/web-server && make buildimage
 
 

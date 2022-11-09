@@ -6,3 +6,4 @@ trained_models
 training_images
 weights
 *.zip
+secret.yaml

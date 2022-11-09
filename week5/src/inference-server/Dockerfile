@@ -8,4 +8,4 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 COPY . ./
 RUN pip3 install -e .
 
-CMD ["python", "-m", "uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8283"]
+CMD ["python", "server.py"]

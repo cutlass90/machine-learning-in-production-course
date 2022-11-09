@@ -39,13 +39,18 @@ def main():
 
         if st.button('generate'):
             st.text('Generating your personal arts. Wait a moment.')
-            data = {'prompt': prompt, 'checkpoint_name':concept}
-            blob_names = requests.post(f'http://{opt.host_ip}:{opt.web_server_port}/generate-images', data=data)
-            blob_names = [i[1:-1] for i in blob_names.text[1:-1].split(',')]
-            for blob_name in blob_names:
-                blob = results_bucket.blob(blob_name)
-                img = blob.download_as_bytes()
-                st.image(img)
+            data = {'prompt': prompt, 'concept':concept}
+            responce = requests.post(f'http://{opt.host_ip}:{opt.web_server_port}/generate-images', data=data)
+            if responce.status_code == 200:
+                blob_names = responce.text[1:-1]
+                if blob_names == 'task failed':
+                    st.text('Your task failed. Something goes wrong, try again later')
+                else:
+                    blob_names = [i[1:-1] for i in blob_names.split(',')]
+                    for blob_name in blob_names:
+                        blob = results_bucket.blob(blob_name)
+                        img = blob.download_as_bytes()
+                        st.image(img)
 
     with train:
         st.header("Here you can crate your own Concept and then use it to unlimited personalized arts generation.")
