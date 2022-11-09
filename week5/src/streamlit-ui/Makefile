@@ -15,6 +15,3 @@ runimagedebug:
 
 runui:
 	streamlit run streamlit_ui.py --server.maxUploadSize 3000
-
-deploy:
-	kubectl apply -f deployment.yaml

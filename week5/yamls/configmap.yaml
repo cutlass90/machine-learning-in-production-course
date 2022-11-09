@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sd-concept-config
+data:
+  web-server-ip: web-server-service
+  redis-server-ip: redis-service

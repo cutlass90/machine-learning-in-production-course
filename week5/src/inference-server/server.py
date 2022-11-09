@@ -22,7 +22,7 @@ else:
 
 results_bucket = storage_client.get_bucket(opt.results_bucket_name)
 checkpoints_bucket = storage_client.get_bucket(opt.checkpoints_bucket_name)
-r = redis.Redis(host=opt.host_ip, port=opt.redis_port, db=0)
+r = redis.Redis(host=opt.redis_ip, port=opt.redis_port, db=0)
 
 
 def save_img_to_storage(blob_name, path2img):

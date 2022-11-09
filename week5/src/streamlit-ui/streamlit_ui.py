@@ -28,7 +28,7 @@ def main():
     with inference:
         st.header("Here you can generate personalized image arts using created earlier Concept")
 
-        concepts_list = requests.get(f'http://{opt.host_ip}:{opt.web_server_port}/get-concepts')
+        concepts_list = requests.get(f'http://{opt.web_server_ip}:{opt.web_server_port}/get-concepts')
         concepts_list = [i[1:-1] for i in concepts_list.text[1:-1].split(',')]
         concept = st.selectbox('choose your concept to use', concepts_list)
 
@@ -40,7 +40,7 @@ def main():
         if st.button('generate'):
             st.text('Generating your personal arts. Wait a moment.')
             data = {'prompt': prompt, 'concept':concept}
-            responce = requests.post(f'http://{opt.host_ip}:{opt.web_server_port}/generate-images', data=data)
+            responce = requests.post(f'http://{opt.web_server_ip}:{opt.web_server_port}/generate-images', data=data)
             if responce.status_code == 200:
                 blob_names = responce.text[1:-1]
                 if blob_names == 'task failed':

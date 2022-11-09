@@ -18,16 +18,11 @@ spec:
         ports:
         - containerPort: 8000
         env:
-        - name: internal-url
+        - name: redis-server-ip
           valueFrom:
             configMapKeyRef:
               name: sd-concept-config
-              key: internal-url
-        - name: inference-url
-          valueFrom:
-            configMapKeyRef:
-              name: sd-concept-config
-              key: inference-url
+              key: redis-server-ip
       nodeSelector:
         type: streamlit-ui
 

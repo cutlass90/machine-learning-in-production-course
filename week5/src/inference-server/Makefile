@@ -12,6 +12,3 @@ runimage:
 
 runimagedebug:
 	docker run --rm -it -p 8283:8283 --gpus all -v /home/nazar/machine-learning-in-production-course/week5/src/secrets:/workspace/src/secrets sd-concept-inference:latest
-
-deploy:
-	kubectl apply -f deployment.yaml

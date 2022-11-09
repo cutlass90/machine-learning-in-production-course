@@ -18,17 +18,11 @@ spec:
         ports:
         - containerPort: 8501
         env:
-        - name: internal-url
+        - name: web-server-ip
           valueFrom:
             configMapKeyRef:
               name: sd-concept-config
-              key: internal-url
-        - name: inference-url
-          valueFrom:
-            configMapKeyRef:
-              name: sd-concept-config
-              key: inference-url
-
+              key: web-server-ip
       nodeSelector:
         type: streamlit-ui
 ---

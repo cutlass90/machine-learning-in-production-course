@@ -24,14 +24,22 @@ class Config:
     accelerator_type = "NVIDIA_TESLA_A100"
 
     #network
-    if os.environ.get('internal-url'): # k8s
-        host_ip = os.environ['internal-url']
+    if os.environ.get('redis-server-ip'): # k8s
+        redis_ip = os.environ['redis-server-ip']
     elif os.path.isfile('/home/nazar/analyze_VGG.html'): #local
-        host_ip = '0.0.0.0'
+        redis_ip = '0.0.0.0'
     else: #docker
-        host_ip = "172.17.0.1"
+        redis_ip = "172.17.0.1"
+
+    if os.environ.get('web-server-ip'): # k8s
+        web_server_ip = os.environ['web-server-ip']
+    elif os.path.isfile('/home/nazar/analyze_VGG.html'): #local
+        web_server_ip = '0.0.0.0'
+    else: #docker
+        web_server_ip = "172.17.0.1"
+
     web_server_port = 8000
-    redis_port = 8123
+    redis_port = 6379
 
     #inference
     n_samples = 1

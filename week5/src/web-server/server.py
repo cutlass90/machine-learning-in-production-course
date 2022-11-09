@@ -22,7 +22,7 @@ else:
     storage_client = storage.Client(opt.project_name)
 
 app = FastAPI()
-r = redis.Redis(host=opt.host_ip, port=opt.redis_port, db=0)
+r = redis.Redis(host=opt.redis_ip, port=opt.redis_port, db=0)
 
 
 def concept2checkpoint(concept):

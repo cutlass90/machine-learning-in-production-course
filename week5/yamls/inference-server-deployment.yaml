@@ -23,11 +23,11 @@ spec:
         env:
           - name: GOOGLE_APPLICATION_CREDENTIALS
             value: /keys/credentials.json
-          - name: internal-url
+          - name: redis-server-ip
             valueFrom:
               configMapKeyRef:
                 name: sd-concept-config
-                key: internal-url
+                key: redis-server-ip
         volumeMounts:
           - mountPath: /keys
             name: cred
