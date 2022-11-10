@@ -16,10 +16,10 @@ class Config:
 
     #training
     training_container_uri = 'gcr.io/sd-concept-project/sd-concept-train-job:latest'
-    dataset = 'person'
+    dataset = 'person_ddim'
     token = 'NazarShmatko'
     training_images_folder = 'training_images'
-    max_training_steps = 2000
+    steps = 1500
     machine_type = "a2-highgpu-1g"
     accelerator_type = "NVIDIA_TESLA_A100"
 
