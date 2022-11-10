@@ -1,0 +1,19 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: redis-scaledobject
+spec:
+  scaleTargetRef:
+    kind: Deployment
+    name: inference-deployment
+  pollingInterval: 15
+  cooldownPeriod: 100
+  maxReplicaCount: 5
+  minReplicaCount: 0
+  triggers:
+    - type: redis
+      metadata:
+        address: 10.92.5.241:6379
+        enableTLS: "false"
+        listName: tasks_queue
+        listLength: "2"
