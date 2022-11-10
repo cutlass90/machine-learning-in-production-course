@@ -39,6 +39,8 @@ def main():
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('--imgs-list', nargs='+', required=True)
     parser.add_argument('--checkpoint-name', type=str, required=True)
+    parser.add_argument('--steps', type=int, default=opt.steps)
+    parser.add_argument('--gpu_id', type=int, default=0)
 
     args = parser.parse_args()
 
@@ -50,7 +52,7 @@ def main():
 
     download_files(opt.dataset)
     command = f"python main.py --base configs/stable-diffusion/v1-finetune_unfrozen.yaml -t --actual_resume weights/model.ckpt --reg_data_root regularization_images/{opt.dataset} -n project_name" + \
-              f" --gpus 0, --data_root {opt.training_images_folder} --max_training_steps {opt.max_training_steps} --class_word person --token {opt.token} --no-test"
+              f" --gpus {args.gpu_id}, --data_root {opt.training_images_folder} --max_training_steps {args.steps} --class_word person --token {opt.token} --no-test"
     print(command)
     p = subprocess.Popen(command.split(" "))
     p.wait()

@@ -34,4 +34,4 @@ if __name__ == "__main__":
                                display_name='display_name_nazar',
                                container_uri=opt.training_container_uri,
                                replica_count=1,
-                               command=["python", "train.py", "--checkpoint-name", "testcustomjob.ckpt", "--imgs-list", "1.jpg", "2.jpg", "3.jpg"])
+                               command=["python", "train.py", "--checkpoint-name", "testcustomjob.ckpt", "--imgs-list", "1.jpg", "2.jpg", "3.jpg", "--steps", "20"])
