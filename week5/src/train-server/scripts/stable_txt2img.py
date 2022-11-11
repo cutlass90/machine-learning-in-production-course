@@ -272,7 +272,7 @@ def main():
                     grid = rearrange(grid, 'n b c h w -> (n b) c h w')
                     
                     for i in range(grid.size(0)):
-                        save_image(grid[i, :, :, :], os.path.join(outpath,opt.prompt[:50]+'_{}.png'.format(i)))
+                        save_image(grid[i, :, :, :], os.path.join(outpath,opt.prompt[:50]+'_{}.jpg'.format(i)))
                     grid = make_grid(grid, nrow=n_rows)
 
                     # to image

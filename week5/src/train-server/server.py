@@ -1,68 +1,84 @@
 import os
-import random
+import pickle
 import shutil
 import subprocess
 import time
 from glob import glob
 from typing import List
 
-import uvicorn
-from fastapi import FastAPI, File, UploadFile, Form
-
+import redis
 from config import opt
+from google.cloud import storage
 
-app = FastAPI()
+if os.path.isfile('secrets/sd-concept-project-14c11c803fff.json'):
+    from google.oauth2 import service_account
+
+    credentials = service_account.Credentials.from_service_account_file('secrets/sd-concept-project-14c11c803fff.json')
+    storage_client = storage.Client(opt.project_name, credentials=credentials)
+else:
+    storage_client = storage.Client(opt.project_name)
+
+user_image_bucket = storage_client.get_bucket(opt.user_image_bucket_name)
+checkpoints_bucket = storage_client.get_bucket(opt.checkpoints_bucket_name)
+r = redis.Redis(host=opt.redis_ip, port=opt.redis_port, db=0)
 
 
-def save_upload_file(upload_file: UploadFile, destination: str) -> None:
-    try:
-        with open(destination, "wb") as buffer:
-            shutil.copyfileobj(upload_file.file, buffer)
-    finally:
-        upload_file.file.close()
+def upload_user_photo(blob, save_path):
+    blob = checkpoints_bucket.blob(blob)
+    os.makedirs(os.path.dirname(save_path), exist_ok=True)
+    blob.download_to_filename(save_path)
 
 
-def download_files(dataset):
+def download_files():
     if not os.path.isfile('weights/model.ckpt'):
         os.makedirs('weights', exist_ok=True)
         import wget
         wget.download('https://dl.dropboxusercontent.com/s/vg2wojrw91b97a3/sd-v1-4.ckpt?dl=0', 'weights/model.ckpt')
 
-    if not os.path.isdir(f'regularization_images/{dataset}'):
+    if not os.path.isdir(f'regularization_images/{opt.dataset}'):
         os.makedirs(f'regularization_images', exist_ok=True)
-        p = subprocess.Popen(f"git clone https://github.com/djbielejeski/Stable-Diffusion-Regularization-Images-{dataset}.git regularization_images".split(" "))
+        p = subprocess.Popen(f"git clone https://github.com/djbielejeski/Stable-Diffusion-Regularization-Images-{opt.dataset}.git regularization_images".split(" "))
         p.wait()
 
 
-@app.post("/")
-async def strarttraining(checkpoint_path: str = Form(...), images_list: List[UploadFile] = File(...)):
-    print('checkpoint_path', checkpoint_path)
-    project_name = 'project' + str(random.randint(10000, 99999))
+def save_checkpoint_to_storage(last_checkpoint_file, checkpoint_path):
+    blob = checkpoints_bucket.blob(checkpoint_path)
+    blob.upload_from_filename(last_checkpoint_file, timeout=300)
 
+
+def strarttraining(save_checkpoint_path_blob: str, user_imgs_blobs_list: List[str]):
     os.makedirs(opt.training_images_folder, exist_ok=True)
     for f in glob(os.path.join(opt.training_images_folder, '*')):
         os.remove(f)
-    for i, f in enumerate(images_list):
-        save_upload_file(f, os.path.join(opt.training_images_folder, f'image{i}.jpg'))
+    for i, f in enumerate(user_imgs_blobs_list):
+        upload_user_photo(f, os.path.join(opt.training_images_folder, f'image{i}.jpg'))
 
-    time.sleep(20)
+    download_files()
+    command = f"python main.py --base configs/stable-diffusion/v1-finetune_unfrozen.yaml -t --actual_resume weights/model.ckpt --reg_data_root regularization_images/{opt.dataset} -n project_name" + \
+              f" --gpus 0, --data_root {opt.training_images_folder} --max_training_steps {opt.max_training_steps} --class_word person --token {opt.token} --no-test"
+    print(command)
+    p = subprocess.Popen(command.split(" "))
+    p.wait()
+
+    last_checkpoint_file = [p for p in glob(f"logs/*/checkpoints/last.ckpt")][0]
+
+    save_checkpoint_to_storage(last_checkpoint_file, save_checkpoint_path_blob)
+
+    shutil.rmtree("logs", ignore_errors=True)
+    print('training has finished')
 
 
-    # download_files(opt.dataset)
-    # command = f"python main.py --base configs/stable-diffusion/v1-finetune_unfrozen.yaml -t --actual_resume weights/model.ckpt --reg_data_root regularization_images/{opt.dataset} -n project_name" + \
-    #           f" --gpus 0, --data_root {opt.training_images_folder} --max_training_steps {opt.max_training_steps} --class_word person --token {opt.token} --no-test"
-    # print(command)
-    # p = subprocess.Popen(command.split(" "))
-    # p.wait()
-    #
-    # l = [p for p in glob(f"logs/*/checkpoints/last.ckpt")]
-    # last_checkpoint_file = [p for p in l if project_name in p][0]
-    #
-    # # save_checkpoint_to_storage(last_checkpoint_file, checkpoint_path)
-    #
-    # shutil.rmtree("logs", ignore_errors=True)
-    # print('training has finished')
+def main():
+    print('inference server started')
+    while True:
+        if r.llen(opt.train_queue_name) > 0:
+            task = r.lpop(opt.train_queue_name)
+            task = pickle.loads(task)
+            print('start train task', task)
+            strarttraining(task['save_checkpoint_path_blob'], task['user_imgs_blobs_list'])
+        else:
+            time.sleep(1)
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    main()

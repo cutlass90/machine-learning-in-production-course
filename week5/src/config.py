@@ -13,6 +13,7 @@ class Config:
     #buckets
     checkpoints_bucket_name = 'sd-concept-checkpoints-storage'
     results_bucket_name = 'sd-concept-results'
+    user_image_bucket_name = 'sd-concept-user-image'
 
     #training
     training_container_uri = 'gcr.io/sd-concept-project/sd-concept-train-job:latest'
@@ -47,7 +48,8 @@ class Config:
     checkpoints_dir = 'checkpoints'
 
     #redis
-    task_queue_name = 'tasks_queue'
+    task_queue_name = 'inference_tasks_queue' # uses for inference tasks
+    train_queue_name = 'train_tasks_queue' # uses for training tasks
 
 
 

@@ -2,8 +2,13 @@ cache
 *.pt
 *.pth
 *.ckpt
+*.png
 regularization_images
 trained_models
 training_images
 weights
 *.zip
+__pycache__
+venv
+checkpoints
+outdir
