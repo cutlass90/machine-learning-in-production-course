@@ -13,7 +13,7 @@ spec:
   triggers:
     - type: redis
       metadata:
-        address: 10.92.5.241:6379
+        address: redis-service.default.svc.cluster.local:6379
         enableTLS: "false"
-        listName: tasks_queue
+        listName: inference_tasks_queue
         listLength: "2"
