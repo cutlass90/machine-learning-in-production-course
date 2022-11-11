@@ -9,11 +9,13 @@ createcluster:
 
 deployall:
 	kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/container-engine-accelerators/master/nvidia-driver-installer/cos/daemonset-preloaded.yaml
+	kubectl apply -f https://github.com/kedacore/keda/releases/download/v2.8.0/keda-2.8.0.yaml
 	cd yamls && kubectl apply -f secret.yaml
 	cd yamls && kubectl apply -f redis-deployment.yaml
 	cd yamls && kubectl apply -f configmap.yaml && kubectl apply -f streamlit-ui-deployment.yaml
 	cd yamls && kubectl apply -f web-server-deployment.yaml
 	cd yamls && kubectl apply -f inference-server-deployment.yaml
+	cd yamls && kubectl apply -f inference-autoscaler.yaml
 
 deletecluster:
 	gcloud container clusters delete sd-concept-cluster --zone us-central1-a
