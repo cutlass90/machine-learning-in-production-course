@@ -69,7 +69,7 @@ def strarttraining(save_checkpoint_path_blob: str, user_imgs_blobs_list: List[st
 
 
 def main():
-    print('inference server started')
+    print('train server started')
     while True:
         if r.llen(opt.train_queue_name) > 0:
             task = r.lpop(opt.train_queue_name)

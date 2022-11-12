@@ -9,3 +9,6 @@ tagimage:
 
 runimage:
 	docker run -d --gpus all -v /home/nazar/machine-learning-in-production-course/week5/src/secrets:/workspace/src/secrets sd-concept-train:latest
+
+runimagedebug:
+	docker run --rm -it --gpus all -v /home/nazar/machine-learning-in-production-course/week5/src/secrets:/workspace/src/secrets sd-concept-train:latest

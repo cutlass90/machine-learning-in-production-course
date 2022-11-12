@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: inference-deployment
+  name: train-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: sd-concept-inference # all pods with this label belong to this deployment
+      app: sd-concept-train # all pods with this label belong to this deployment
   template:
     metadata:
       labels:
-        app: sd-concept-inference
+        app: sd-concept-train
     spec:
       containers:
-      - name: sd-concept-app-inference
-        image: gcr.io/sd-concept-project/sd-concept-inference:latest
+      - name: sd-concept-app-train
+        image: gcr.io/sd-concept-project/sd-concept-train:latest
         ports:
         - containerPort: 8283
         resources:
@@ -39,4 +39,4 @@ spec:
                 path: credentials.json
             secretName: credentials-service-account
       nodeSelector:
-        type: inference
+        type: train

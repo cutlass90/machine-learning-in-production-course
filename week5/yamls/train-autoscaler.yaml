@@ -1,0 +1,19 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: redis-scaledobject
+spec:
+  scaleTargetRef:
+    kind: Deployment
+    name: train-deployment
+  pollingInterval: 15
+  cooldownPeriod: 100
+  maxReplicaCount: 5
+  minReplicaCount: 0
+  triggers:
+    - type: redis
+      metadata:
+        address: redis-service.default.svc.cluster.local:6379
+        enableTLS: "false"
+        listName: train_tasks_queue
+        listLength: "2"
