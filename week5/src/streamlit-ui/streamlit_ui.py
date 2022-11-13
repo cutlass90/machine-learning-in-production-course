@@ -70,12 +70,10 @@ def main():
                 st.text(f'Important. Do not close or reload this browser tab until the end.')
 
                 files = [('images_list', (uploaded_photo.name, uploaded_photo.getvalue(), 'image/png')) for i, uploaded_photo in enumerate(uploaded_photos)]
-                response = requests.post(f'http://{opt.web_server_ip}:{opt.web_server_port}/train', files=files)
-                st.write(response)
+                response = requests.post(f'http://{opt.web_server_ip}:{opt.web_server_port}/train', files=files, data={"user_email":st.session_state['user_email']})
                 if response.status_code == 200:
                     ph = st.empty()
                     for i in range(3600):
-                        st.write(response)
                         percent_complete = i / 3600
                         my_bar.progress(percent_complete)
                         time.sleep(1)

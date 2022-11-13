@@ -11,7 +11,7 @@ runimage:
 	docker run -d -p 8000:8000 -v /home/nazar/machine-learning-in-production-course/week5/src/secrets:/code/secrets sd-concept-web-server:latest
 
 runimagedebug:
-	docker run --rm -it -v /home/nazar/machine-learning-in-production-course/week5/src/secrets:/code/secrets sd-concept-web-server:latest
+	docker run --rm -it -p 8000:8000 -v /home/nazar/machine-learning-in-production-course/week5/src/secrets:/code/secrets sd-concept-web-server:latest
 
 deploy:
 	kubectl apply -f deployment.yaml

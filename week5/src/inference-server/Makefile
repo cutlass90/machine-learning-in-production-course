@@ -8,7 +8,7 @@ tagimage:
 	docker image tag sd-concept-inference:latest gcr.io/sd-concept-project/sd-concept-inference:latest
 
 runimage:
-	docker run -d -p 8283:8283 --gpus all -v /home/nazar/machine-learning-in-production-course/week5/src/secrets:/workspace/src/secrets sd-concept-inference:latest
+	docker run -d --gpus all -v /home/nazar/machine-learning-in-production-course/week5/src/secrets:/workspace/src/secrets sd-concept-inference:latest
 
 runimagedebug:
-	docker run --rm -it -p 8283:8283 --gpus all -v /home/nazar/machine-learning-in-production-course/week5/src/secrets:/workspace/src/secrets sd-concept-inference:latest
+	docker run --rm -it --gpus all -v /home/nazar/machine-learning-in-production-course/week5/src/secrets:/workspace/src/secrets sd-concept-inference:latest

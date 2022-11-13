@@ -24,7 +24,7 @@ r = redis.Redis(host=opt.redis_ip, port=opt.redis_port, db=0)
 
 
 def upload_user_photo(blob, save_path):
-    blob = checkpoints_bucket.blob(blob)
+    blob = user_image_bucket.blob(blob)
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
     blob.download_to_filename(save_path)
 
@@ -52,10 +52,10 @@ def strarttraining(save_checkpoint_path_blob: str, user_imgs_blobs_list: List[st
         os.remove(f)
     for i, f in enumerate(user_imgs_blobs_list):
         upload_user_photo(f, os.path.join(opt.training_images_folder, f'image{i}.jpg'))
-
+    print('download_files')
     download_files()
     command = f"python main.py --base configs/stable-diffusion/v1-finetune_unfrozen.yaml -t --actual_resume weights/model.ckpt --reg_data_root regularization_images/{opt.dataset} -n project_name" + \
-              f" --gpus 0, --data_root {opt.training_images_folder} --max_training_steps {opt.max_training_steps} --class_word person --token {opt.token} --no-test"
+              f" --gpus 0, --data_root {opt.training_images_folder} --max_training_steps {opt.steps} --class_word person --token {opt.token} --no-test"
     print(command)
     p = subprocess.Popen(command.split(" "))
     p.wait()
