@@ -1,7 +1,7 @@
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
-  name: redis-scaledobject
+  name: inference-autoscaler
 spec:
   scaleTargetRef:
     kind: Deployment

@@ -39,4 +39,4 @@ spec:
                 path: credentials.json
             secretName: credentials-service-account
       nodeSelector:
-        type: inference
+        type: train

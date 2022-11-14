@@ -20,7 +20,7 @@ class Config:
     dataset = 'person_ddim'
     token = 'NazarShmatko'
     training_images_folder = 'training_images'
-    steps = 1500
+    steps = 2000
     machine_type = "a2-highgpu-1g"
     accelerator_type = "NVIDIA_TESLA_A100"
 
@@ -43,7 +43,7 @@ class Config:
     redis_port = 6379
 
     #inference
-    n_samples = 1
+    n_samples = 5
     outdir = 'outdir'
     checkpoints_dir = 'checkpoints'
 

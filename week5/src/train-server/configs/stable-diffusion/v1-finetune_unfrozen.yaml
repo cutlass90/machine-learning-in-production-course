@@ -6,7 +6,7 @@ model:
     linear_start: 0.00085
     linear_end: 0.0120
     num_timesteps_cond: 1
-    log_every_t: 200
+    log_every_t: 20000
     timesteps: 1000
     first_stage_key: image
     cond_stage_key: caption
@@ -106,12 +106,12 @@ data:
 lightning:
   modelcheckpoint:
     params:
-      every_n_train_steps: 500
+      every_n_train_steps: 50000
   callbacks:
     image_logger:
       target: main.ImageLogger
       params:
-        batch_frequency: 500
+        batch_frequency: 50000
         max_images: 8
         increase_log_steps: False
 
