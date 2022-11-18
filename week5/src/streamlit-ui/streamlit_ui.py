@@ -41,8 +41,14 @@ def main():
         images = sorted(glob(os.path.join('prompts', style, '*/*.jpeg')))
         st.image(images, width=200)
 
+        with st.expander("Advanced"):
+            custom_prompt = st.text_input('custom prompt, use token NazarShmatko person', "None")
+
+
         if st.button('generate'):
             st.text('Generating your personal arts. Wait a moment.')
+            if custom_prompt != "None":
+                prompt = custom_prompt
             data = {'prompt': prompt, 'concept':concept}
             responce = requests.post(f'http://{opt.web_server_ip}:{opt.web_server_port}/generate-images', data=data)
             if responce.status_code == 200:
